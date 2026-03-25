@@ -53,6 +53,9 @@ function handleSocketConnection(socket, io) {
       users: channelUsers
     });
 
+    // Mettre à jour les compteurs pour tous
+    broadcastChannelCounts(io);
+
     console.log(`${username} a rejoint le ${channel}`);
   });
 
@@ -143,7 +146,19 @@ function leaveChannel(socket, user, channel, io) {
     channel: channel
   });
   
+  // Mettre à jour les compteurs pour tous
+  broadcastChannelCounts(io);
+  
   console.log(`${user.username} a quitté le ${channel}`);
+}
+
+function broadcastChannelCounts(io) {
+  const channelsInfo = CHANNELS.map(channel => ({
+    name: channel,
+    userCount: users[channel].size
+  }));
+  
+  io.emit('channels-counts', channelsInfo);
 }
 
 module.exports = { handleSocketConnection };

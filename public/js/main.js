@@ -35,6 +35,7 @@ function setupEventListeners() {
     document.getElementById('mute-btn').addEventListener('click', toggleMute);
     document.getElementById('speaker-btn').addEventListener('click', toggleSpeaker);
     document.getElementById('volume-slider').addEventListener('input', handleVolumeChange);
+    document.getElementById('enable-audio-btn').addEventListener('click', enableAudioManually);
     
     // Canaux
     document.querySelectorAll('.channel-item').forEach(item => {
@@ -63,6 +64,7 @@ function setupSocketEvents() {
     socket.on('user-joined', handleUserJoined);
     socket.on('user-left', handleUserLeft);
     socket.on('channels-list', updateChannelsList);
+    socket.on('channels-counts', updateChannelCounts);
     
     // Gestion d'erreurs
     socket.on('error', (data) => {
@@ -177,6 +179,16 @@ function showChannelInfo(channel) {
     channelDescription.textContent = getChannelDescription(channel);
     
     channelInfo.classList.remove('hidden');
+}
+
+function updateChannelCounts(channelsInfo) {
+    channelsInfo.forEach(channel => {
+        const channelElement = document.querySelector(`[data-channel="${channel.name}"]`);
+        if (channelElement) {
+            const userCountElement = channelElement.querySelector('.user-count');
+            userCountElement.textContent = channel.userCount;
+        }
+    });
 }
 
 function clearChannelInfo() {
@@ -321,10 +333,16 @@ function toggleMute() {
         muteBtn.classList.add('muted');
         icon.className = 'fas fa-microphone-slash';
         muteBtn.title = 'Activer le micro';
+        muteBtn.style.backgroundColor = 'var(--danger-color)';
+        muteBtn.style.borderColor = 'var(--danger-color)';
+        muteBtn.style.color = 'white';
     } else {
         muteBtn.classList.remove('muted');
         icon.className = 'fas fa-microphone';
         muteBtn.title = 'Couper le micro';
+        muteBtn.style.backgroundColor = 'var(--success-color)';
+        muteBtn.style.borderColor = 'var(--success-color)';
+        muteBtn.style.color = 'white';
     }
     
     // Informer le serveur du changement de statut
@@ -370,6 +388,18 @@ function handleVolumeChange(event) {
     if (window.webRTCManager) {
         window.webRTCManager.setVolume(volume / 100);
     }
+}
+
+function enableAudioManually() {
+    // Forcer l'activation de tous les éléments audio
+    document.querySelectorAll('[id^="audio-"]').forEach(audioElement => {
+        audioElement.play().catch(console.error);
+    });
+    
+    // Masquer le bouton d'activation
+    document.getElementById('enable-audio-btn').style.display = 'none';
+    
+    addMessage('Audio activé manuellement !', 'success');
 }
 
 // Gestion WebRTC

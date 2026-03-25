@@ -76,6 +76,7 @@ class WebRTCManager {
                 if (newIsSpeaking !== isSpeaking) {
                     isSpeaking = newIsSpeaking;
                     this.notifyAudioStatus(isSpeaking);
+                    this.updateMicrophoneIndicator(isSpeaking);
                 }
                 
                 requestAnimationFrame(checkAudioLevel);
@@ -85,6 +86,21 @@ class WebRTCManager {
             
         } catch (error) {
             console.error('Erreur lors de la configuration de la détection vocale:', error);
+        }
+    }
+    
+    updateMicrophoneIndicator(isSpeaking) {
+        const muteBtn = document.getElementById('mute-btn');
+        if (muteBtn && !this.isMuted) {
+            if (isSpeaking) {
+                muteBtn.style.backgroundColor = '#22c55e';
+                muteBtn.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.5)';
+                muteBtn.style.transform = 'scale(1.1)';
+            } else {
+                muteBtn.style.backgroundColor = 'var(--success-color)';
+                muteBtn.style.boxShadow = 'none';
+                muteBtn.style.transform = 'scale(1)';
+            }
         }
     }
     
@@ -248,6 +264,10 @@ class WebRTCManager {
             audioElement.volume = this.volume;
             audioElement.muted = this.isSpeakerMuted;
             
+            // Forcer la lecture automatique
+            audioElement.setAttribute('playsinline', 'true');
+            audioElement.setAttribute('webkit-playsinline', 'true');
+            
             // Ajouter à un container caché pour la gestion
             let audioContainer = document.getElementById('remote-audio-container');
             if (!audioContainer) {
@@ -261,6 +281,22 @@ class WebRTCManager {
         }
         
         audioElement.srcObject = stream;
+        
+        // Forcer la lecture audio (important pour les navigateurs modernes)
+        audioElement.play().catch(error => {
+            console.warn('Lecture automatique bloquée, interaction utilisateur requise:', error);
+            
+            // Afficher le bouton d'activation audio
+            const enableAudioBtn = document.getElementById('enable-audio-btn');
+            if (enableAudioBtn) {
+                enableAudioBtn.style.display = 'flex';
+            }
+            
+            // Ajouter un message pour demander à l'utilisateur de cliquer
+            if (window.addMessage) {
+                window.addMessage('Cliquez sur le bouton ▶ pour activer l\'audio !', 'warning');
+            }
+        });
         
         console.log('Flux audio distant configuré pour', userId);
     }
