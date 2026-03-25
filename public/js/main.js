@@ -241,12 +241,12 @@ function createUserElement(user) {
     
     userDiv.innerHTML = `
         <div class="user-item-avatar">
-            <i class="fas fa-user"></i>
+            <span class="icon-user"></span>
         </div>
         <div class="user-item-info">
             <div class="user-item-name">${escapeHtml(user.username)}</div>
             <div class="user-item-status">
-                <i class="fas fa-microphone"></i>
+                <span class="icon-microphone"></span>
                 <span>Connecté</span>
             </div>
         </div>
@@ -287,21 +287,21 @@ function handleUserAudioStatus(data) {
     if (!userElement) return;
     
     const statusElement = userElement.querySelector('.user-item-status');
-    const iconElement = statusElement.querySelector('i');
-    const textElement = statusElement.querySelector('span');
+    const iconElement = statusElement.querySelector('span');
+    const textElement = statusElement.querySelector('span:last-child');
     
     if (data.isMuted) {
-        iconElement.className = 'fas fa-microphone-slash';
+        iconElement.className = 'icon-microphone-slash';
         textElement.textContent = 'Muet';
         statusElement.classList.add('muted');
         statusElement.classList.remove('speaking');
     } else if (data.isSpeaking) {
-        iconElement.className = 'fas fa-microphone';
+        iconElement.className = 'icon-microphone';
         textElement.textContent = 'Parle';
         statusElement.classList.add('speaking');
         statusElement.classList.remove('muted');
     } else {
-        iconElement.className = 'fas fa-microphone';
+        iconElement.className = 'icon-microphone';
         textElement.textContent = 'Connecté';
         statusElement.classList.remove('muted', 'speaking');
     }
@@ -327,18 +327,18 @@ function toggleMute() {
     isMuted = !isMuted;
     
     const muteBtn = document.getElementById('mute-btn');
-    const icon = muteBtn.querySelector('i');
+    const icon = muteBtn.querySelector('span');
     
     if (isMuted) {
         muteBtn.classList.add('muted');
-        icon.className = 'fas fa-microphone-slash';
+        icon.className = 'icon-microphone-slash';
         muteBtn.title = 'Activer le micro';
         muteBtn.style.backgroundColor = 'var(--danger-color)';
         muteBtn.style.borderColor = 'var(--danger-color)';
         muteBtn.style.color = 'white';
     } else {
         muteBtn.classList.remove('muted');
-        icon.className = 'fas fa-microphone';
+        icon.className = 'icon-microphone';
         muteBtn.title = 'Couper le micro';
         muteBtn.style.backgroundColor = 'var(--success-color)';
         muteBtn.style.borderColor = 'var(--success-color)';
@@ -363,15 +363,15 @@ function toggleSpeaker() {
     isSpeakerMuted = !isSpeakerMuted;
     
     const speakerBtn = document.getElementById('speaker-btn');
-    const icon = speakerBtn.querySelector('i');
+    const icon = speakerBtn.querySelector('span');
     
     if (isSpeakerMuted) {
         speakerBtn.classList.add('muted');
-        icon.className = 'fas fa-volume-mute';
+        icon.className = 'icon-volume-mute';
         speakerBtn.title = 'Activer les haut-parleurs';
     } else {
         speakerBtn.classList.remove('muted');
-        icon.className = 'fas fa-volume-up';
+        icon.className = 'icon-volume-up';
         speakerBtn.title = 'Couper les haut-parleurs';
     }
     
@@ -442,7 +442,7 @@ function addMessage(text, type = 'info') {
     
     const icon = getMessageIcon(type);
     messageDiv.innerHTML = `
-        <i class="${icon}"></i>
+        <span class="${icon}"></span>
         <span>${escapeHtml(text)}</span>
     `;
     
@@ -458,10 +458,10 @@ function addMessage(text, type = 'info') {
 
 function getMessageIcon(type) {
     const icons = {
-        'info': 'fas fa-info-circle',
-        'success': 'fas fa-check-circle',
-        'warning': 'fas fa-exclamation-triangle',
-        'error': 'fas fa-times-circle'
+        'info': 'icon-info',
+        'success': 'icon-check',
+        'warning': 'icon-warning',
+        'error': 'icon-error'
     };
     return icons[type] || icons.info;
 }
@@ -469,7 +469,7 @@ function getMessageIcon(type) {
 function clearMessages() {
     document.getElementById('messages').innerHTML = `
         <div class="message info">
-            <i class="fas fa-info-circle"></i>
+            <span class="icon-info"></span>
             Sélectionnez un canal pour rejoindre la conversation
         </div>
     `;
@@ -478,7 +478,7 @@ function clearMessages() {
 // Gestion de l'état de connexion
 function updateConnectionStatus(connected) {
     const statusElement = document.getElementById('connection-status');
-    const icon = statusElement.querySelector('i');
+    const icon = statusElement.querySelector('span');
     const text = statusElement.childNodes[1];
     
     if (connected) {

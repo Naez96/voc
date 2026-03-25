@@ -5,16 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Vocal - 3 Canaux</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Icônes Unicode pour remplacer Font Awesome */
+        .icon-microphone::before { content: '🎤'; }
+        .icon-microphone-slash::before { content: '🔇'; }
+        .icon-volume-up::before { content: '🔊'; }
+        .icon-volume-down::before { content: '🔉'; }
+        .icon-volume-mute::before { content: '🔇'; }
+        .icon-user::before { content: '👤'; }
+        .icon-users::before { content: '👥'; }
+        .icon-headphones::before { content: '🎧'; }
+        .icon-lock::before { content: '🔒'; }
+        .icon-sign-in::before { content: '➡️'; }
+        .icon-sign-out::before { content: '⬅️'; }
+        .icon-info::before { content: 'ℹ️'; }
+        .icon-check::before { content: '✅'; }
+        .icon-warning::before { content: '⚠️'; }
+        .icon-error::before { content: '❌'; }
+        .icon-play::before { content: '▶️'; }
+        .fas, .far { font-family: inherit; }
+    </style>
 </head>
 <body>
     <div class="app-container">
         <!-- En-tête -->
         <header class="header">
-            <h1><i class="fas fa-microphone"></i> Chat Vocal</h1>
+            <h1><span class="icon-microphone"></span> Chat Vocal</h1>
             <div class="header-info">
                 <span id="connection-status" class="status offline">
-                    <i class="fas fa-circle"></i> Déconnecté
+                    <span class="icon-info"></span> Déconnecté
                 </span>
             </div>
         </header>
@@ -22,14 +41,14 @@
         <!-- Connexion -->
         <div id="login-section" class="login-section">
             <div class="login-card">
-                <h2><i class="fas fa-user"></i> Rejoindre le chat</h2>
+                <h2><span class="icon-user"></span> Rejoindre le chat</h2>
                 <form id="login-form">
                     <div class="input-group">
                         <label for="username">Nom d'utilisateur :</label>
-                        <input type="text" id="username" required maxlength="20" placeholder="Entrez votre pseudo">
+                        <input type="text" id="username" required maxlength="20" placeholder="Entrez votre pseudo" autocomplete="username">
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                        <span class="icon-sign-in"></span> Se connecter
                     </button>
                 </form>
             </div>
@@ -41,36 +60,36 @@
             <aside class="sidebar">
                 <div class="user-info">
                     <div class="user-avatar">
-                        <i class="fas fa-user"></i>
+                        <span class="icon-user"></span>
                     </div>
                     <div class="user-details">
                         <span id="current-username">Utilisateur</span>
                         <button id="disconnect-btn" class="btn btn-small btn-secondary">
-                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                            <span class="icon-sign-out"></span> Déconnexion
                         </button>
                     </div>
                 </div>
 
                 <div class="channels-section">
-                    <h3><i class="fas fa-headphones"></i> Canaux Vocaux</h3>
+                    <h3><span class="icon-headphones"></span> Canaux Vocaux</h3>
                     <div class="channels-list">
                         <div class="channel-item" data-channel="canal-general">
                             <div class="channel-info">
-                                <i class="fas fa-volume-up"></i>
+                                <span class="icon-volume-up"></span>
                                 <span>Canal Général</span>
                             </div>
                             <span class="user-count">0</span>
                         </div>
                         <div class="channel-item" data-channel="canal-prive">
                             <div class="channel-info">
-                                <i class="fas fa-lock"></i>
+                                <span class="icon-lock"></span>
                                 <span>Canal Privé</span>
                             </div>
                             <span class="user-count">0</span>
                         </div>
                         <div class="channel-item" data-channel="canal-conference">
                             <div class="channel-info">
-                                <i class="fas fa-users"></i>
+                                <span class="icon-users"></span>
                                 <span>Canal Conférence</span>
                             </div>
                             <span class="user-count">0</span>
@@ -84,18 +103,18 @@
                 <!-- Contrôles audio -->
                 <div class="audio-controls">
                     <button id="mute-btn" class="btn btn-audio" title="Couper le micro">
-                        <i class="fas fa-microphone"></i>
+                        <span class="icon-microphone"></span>
                     </button>
                     <div class="volume-control">
-                        <i class="fas fa-volume-down"></i>
+                        <span class="icon-volume-down"></span>
                         <input type="range" id="volume-slider" min="0" max="100" value="50">
-                        <i class="fas fa-volume-up"></i>
+                        <span class="icon-volume-up"></span>
                     </div>
                     <button id="speaker-btn" class="btn btn-audio" title="Couper les haut-parleurs">
-                        <i class="fas fa-volume-up"></i>
+                        <span class="icon-volume-up"></span>
                     </button>
                     <button id="enable-audio-btn" class="btn btn-audio" title="Activer l'audio" style="display: none;">
-                        <i class="fas fa-play"></i>
+                        <span class="icon-play"></span>
                     </button>
                 </div>
 
@@ -107,7 +126,7 @@
 
                 <!-- Liste des utilisateurs dans le canal -->
                 <div id="users-list" class="users-list hidden">
-                    <h3><i class="fas fa-users"></i> Utilisateurs connectés</h3>
+                    <h3><span class="icon-users"></span> Utilisateurs connectés</h3>
                     <div id="users-container" class="users-container">
                         <!-- Les utilisateurs seront ajoutés dynamiquement -->
                     </div>
@@ -116,7 +135,7 @@
                 <!-- Messages d'information -->
                 <div id="messages" class="messages">
                     <div class="message info">
-                        <i class="fas fa-info-circle"></i>
+                        <span class="icon-info"></span>
                         Sélectionnez un canal pour rejoindre la conversation
                     </div>
                 </div>

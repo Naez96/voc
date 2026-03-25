@@ -23,9 +23,13 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+      fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
       mediaSrc: ["'self'", "blob:"],
-      connectSrc: ["'self'", "wss:", "ws:"]
+      connectSrc: ["'self'", "wss:", "ws:", "https:"],
+      imgSrc: ["'self'", "data:", "https:"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: []
     }
   }
 }));
