@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Vocal - 3 Canaux</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- En-tête -->
+        <header class="header">
+            <h1><i class="fas fa-microphone"></i> Chat Vocal</h1>
+            <div class="header-info">
+                <span id="connection-status" class="status offline">
+                    <i class="fas fa-circle"></i> Déconnecté
+                </span>
+            </div>
+        </header>
+
+        <!-- Connexion -->
+        <div id="login-section" class="login-section">
+            <div class="login-card">
+                <h2><i class="fas fa-user"></i> Rejoindre le chat</h2>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="username">Nom d'utilisateur :</label>
+                        <input type="text" id="username" required maxlength="20" placeholder="Entrez votre pseudo">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Application principale -->
+        <div id="app-section" class="app-section hidden">
+            <!-- Panel de gauche - Canaux -->
+            <aside class="sidebar">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span id="current-username">Utilisateur</span>
+                        <button id="disconnect-btn" class="btn btn-small btn-secondary">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </button>
+                    </div>
+                </div>
+
+                <div class="channels-section">
+                    <h3><i class="fas fa-headphones"></i> Canaux Vocaux</h3>
+                    <div class="channels-list">
+                        <div class="channel-item" data-channel="canal-general">
+                            <div class="channel-info">
+                                <i class="fas fa-volume-up"></i>
+                                <span>Canal Général</span>
+                            </div>
+                            <span class="user-count">0</span>
+                        </div>
+                        <div class="channel-item" data-channel="canal-prive">
+                            <div class="channel-info">
+                                <i class="fas fa-lock"></i>
+                                <span>Canal Privé</span>
+                            </div>
+                            <span class="user-count">0</span>
+                        </div>
+                        <div class="channel-item" data-channel="canal-conference">
+                            <div class="channel-info">
+                                <i class="fas fa-users"></i>
+                                <span>Canal Conférence</span>
+                            </div>
+                            <span class="user-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Zone principale -->
+            <main class="main-content">
+                <!-- Contrôles audio -->
+                <div class="audio-controls">
+                    <button id="mute-btn" class="btn btn-audio" title="Couper le micro">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <div class="volume-control">
+                        <i class="fas fa-volume-down"></i>
+                        <input type="range" id="volume-slider" min="0" max="100" value="50">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <button id="speaker-btn" class="btn btn-audio" title="Couper les haut-parleurs">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- Informations du canal actuel -->
+                <div id="channel-info" class="channel-info-panel hidden">
+                    <h2 id="current-channel-name">Aucun canal sélectionné</h2>
+                    <p id="current-channel-description">Sélectionnez un canal pour commencer à parler</p>
+                </div>
+
+                <!-- Liste des utilisateurs dans le canal -->
+                <div id="users-list" class="users-list hidden">
+                    <h3><i class="fas fa-users"></i> Utilisateurs connectés</h3>
+                    <div id="users-container" class="users-container">
+                        <!-- Les utilisateurs seront ajoutés dynamiquement -->
+                    </div>
+                </div>
+
+                <!-- Messages d'information -->
+                <div id="messages" class="messages">
+                    <div class="message info">
+                        <i class="fas fa-info-circle"></i>
+                        Sélectionnez un canal pour rejoindre la conversation
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/webrtc.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
