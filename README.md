@@ -35,7 +35,7 @@ npm install
 npm run dev
 ```
 
-L'application sera accessible sur `http://localhost:3000`
+L'application sera accessible sur `http://localhost:3002`
 
 ### Production sur serveur Debian OVH
 
@@ -74,7 +74,7 @@ nano .env
 3. **Configuration de l'environnement (.env)**
 ```bash
 NODE_ENV=production
-PORT=3000
+PORT=3002
 DOMAIN=voc.naez.fr
 ```
 
@@ -104,7 +104,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/voc.naez.fr/privkey.pem;
     
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3002;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -117,7 +117,7 @@ server {
     
     # Configuration spéciale pour Socket.io
     location /socket.io/ {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3002;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";

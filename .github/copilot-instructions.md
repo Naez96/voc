@@ -43,7 +43,7 @@ Application web de chat vocal avec 3 canaux différents utilisant Node.js, Socke
 ```
 
 ## Configuration pour serveur Debian
-- Port par défaut: 3000
+- Port par défaut: 3002
 - Variables d'environnement configurables
 - Script de démarrage pour systemd
 - Configuration nginx pour reverse proxy
