@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de déploiement pour voc.naez.fr
+# Script de déploiement pour voc.naez.fr (version corrigée)
 # À exécuter sur le serveur Debian OVH
 
 echo "🚀 Démarrage du déploiement de voc.naez.fr..."
@@ -46,7 +46,7 @@ if [ ! -f ".env" ]; then
     echo "✅ Fichier .env créé, veuillez le configurer si nécessaire"
 fi
 
-# Configuration Nginx TEMPORAIRE (sans SSL d'abord)
+# Configuration Nginx TEMPORAIRE (sans SSL)
 echo "🌐 Configuration Nginx temporaire (sans SSL)..."
 cat > /etc/nginx/sites-available/voc-naez-fr << 'EOF'
 server {
@@ -104,43 +104,49 @@ echo "🚀 Démarrage de l'application..."
 pm2 delete voc-naez-fr 2>/dev/null || true
 pm2 start server/app.js --name "voc-naez-fr"
 pm2 save
-pm2 startup
 
-echo ""
-echo "✅ Déploiement terminé !"
-echo ""
-
-# Configuration SSL optionnelle
-read -p "🔐 Voulez-vous configurer SSL maintenant ? (y/N): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Installation de certbot si pas déjà installé
-    if ! command -v certbot &> /dev/null; then
-        echo "📥 Installation de Certbot..."
-        apt update
-        apt install -y certbot python3-certbot-nginx
-    fi
-    
-    echo "🔑 Configuration SSL avec Let's Encrypt..."
-    certbot --nginx -d voc.naez.fr
-    
-    if [ $? -eq 0 ]; then
-        echo "✅ SSL configuré avec succès !"
-        
-        # Configuration du renouvellement automatique
-        if ! crontab -l 2>/dev/null | grep -q certbot; then
-            (crontab -l 2>/dev/null; echo "0 12 * * * /usr/bin/certbot renew --quiet") | crontab -
-            echo "✅ Renouvellement automatique configuré"
-        fi
-    fi
+# Configuration du démarrage automatique PM2
+if ! pm2 startup | grep -q "already"; then
+    pm2 startup
 fi
 
 echo ""
-echo "📋 Prochaines étapes :"
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "1. Configurez le certificat SSL avec : sudo certbot --nginx -d voc.naez.fr"
-fi
-echo "2. Vérifiez que l'application fonctionne : pm2 status"
-echo "3. Consultez les logs : pm2 logs voc-naez-fr"
+echo "✅ Déploiement temporaire terminé !"
 echo ""
-echo "🌐 Votre chat vocal sera accessible sur : https://voc.naez.fr"
+echo "🔐 Configuration SSL avec Let's Encrypt..."
+
+# Installation de certbot si pas déjà installé
+if ! command -v certbot &> /dev/null; then
+    echo "📥 Installation de Certbot..."
+    apt update
+    apt install -y certbot python3-certbot-nginx
+fi
+
+# Génération du certificat SSL
+echo "🔑 Génération du certificat SSL pour voc.naez.fr..."
+certbot --nginx -d voc.naez.fr --non-interactive --agree-tos --email admin@naez.fr
+
+if [ $? -eq 0 ]; then
+    echo "✅ Certificat SSL généré avec succès !"
+    
+    # Configuration du renouvellement automatique
+    if ! crontab -l 2>/dev/null | grep -q certbot; then
+        (crontab -l 2>/dev/null; echo "0 12 * * * /usr/bin/certbot renew --quiet") | crontab -
+        echo "✅ Renouvellement automatique du certificat configuré"
+    fi
+else
+    echo "⚠️ Erreur lors de la génération du certificat SSL"
+    echo "Vous pouvez le faire manuellement plus tard avec : sudo certbot --nginx -d voc.naez.fr"
+fi
+
+echo ""
+echo "✅ Déploiement complet terminé !"
+echo ""
+echo "📋 Informations :"
+echo "- Application : pm2 status"
+echo "- Logs : pm2 logs voc-naez-fr"
+echo "- Nginx : nginx -t && systemctl status nginx"
+echo ""
+echo "🌐 Votre chat vocal est accessible sur :"
+echo "   - HTTP : http://voc.naez.fr"
+echo "   - HTTPS : https://voc.naez.fr (si SSL configuré)"
